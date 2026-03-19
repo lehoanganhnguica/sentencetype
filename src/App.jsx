@@ -13,14 +13,8 @@ function shuffleArray(arr) {
   return copy
 }
 
-function generateQuizData(difficulty) {
-  let filtered = questionDatabase
-
-  if (difficulty !== 'all') {
-    filtered = questionDatabase.filter(q => q.difficulty === difficulty)
-  }
-
-  return shuffleArray(filtered).slice(0, Math.min(QUIZ_SIZE, filtered.length))
+function generateQuizData() {
+  return shuffleArray(questionDatabase).slice(0, Math.min(QUIZ_SIZE, questionDatabase.length))
 }
 
 function StatCard({ label, value }) {
@@ -38,22 +32,15 @@ function FeedbackBox({ question, selectedAnswer }) {
   return (
     <div className={`feedback-box ${isCorrect ? 'correct' : 'wrong'}`}>
       <div className="feedback-title">{isCorrect ? 'Correct' : 'Not quite'}</div>
-
       <div className="feedback-text">
         <strong>Correct answer:</strong> {question.correctAnswer}
       </div>
-
       <div className="feedback-text">{question.explanation}</div>
-
-      <div className="feedback-chip-row">
-        <span className="feedback-chip">Difficulty: {question.difficulty}</span>
-      </div>
     </div>
   )
 }
 
 export default function App() {
-  const [difficulty, setDifficulty] = useState('all')
   const [quiz, setQuiz] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState('')
@@ -79,7 +66,7 @@ export default function App() {
   const progress = hasQuiz ? Math.round((completedCount / quiz.length) * 100) : 0
 
   function generateNewQuiz() {
-    const newQuiz = generateQuizData(difficulty)
+    const newQuiz = generateQuizData()
     setQuiz(newQuiz)
     setCurrentIndex(0)
     setSelectedAnswer('')
@@ -90,67 +77,44 @@ export default function App() {
   function handleCheckAnswer() {
     if (!currentQuestion || !selectedAnswer) return
 
-    setAnswerMap(prev => ({
+    setAnswerMap((prev) => ({
       ...prev,
       [currentQuestion.id]: selectedAnswer,
     }))
 
-    setSubmittedMap(prev => ({
+    setSubmittedMap((prev) => ({
       ...prev,
       [currentQuestion.id]: true,
     }))
   }
 
   function handleNextQuestion() {
-    setCurrentIndex(prev => prev + 1)
+    setCurrentIndex((prev) => prev + 1)
     setSelectedAnswer('')
   }
 
   return (
     <div className="page">
       <div className="container">
-
-        {/* HEADER */}
         <section className="hero-card">
           <div className="hero-top">
             <div>
               <h1 className="title">Sentence Types Review Quiz</h1>
               <p className="subtitle">
-                Practice identifying sentence structures with targeted difficulty levels.
+                Practice identifying simple, compound, complex, and compound-complex sentences.
               </p>
             </div>
-
             <button className="button button-primary" onClick={generateNewQuiz}>
               Generate new quiz
             </button>
           </div>
 
-          {/* FILTER */}
-          <div style={{ marginBottom: '18px' }}>
-            <label style={{ fontWeight: '600', marginRight: '10px' }}>
-              Difficulty:
-            </label>
-
-            <select
-              value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value)}
-              className="select"
-            >
-              <option value="all">All</option>
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="difficult">Difficult</option>
-            </select>
-          </div>
-
-          {/* STATS */}
           <div className="stats-grid">
             <StatCard label="Score" value={`${score}/${hasQuiz ? quiz.length : QUIZ_SIZE}`} />
             <StatCard label="Completed" value={completedCount} />
             <StatCard label="Current" value={hasQuiz ? currentIndex + 1 : 0} />
           </div>
 
-          {/* PROGRESS */}
           <div className="progress-wrapper">
             <div className="progress-top">
               <span>Progress</span>
@@ -162,18 +126,14 @@ export default function App() {
           </div>
         </section>
 
-        {/* EMPTY STATE */}
         {!hasQuiz && (
           <section className="panel empty-state">
             <div className="empty-icon">✦</div>
             <h2>No quiz yet</h2>
-            <p>
-              Select a difficulty, then click <strong>Generate new quiz</strong>.
-            </p>
+            <p>Click <strong>Generate new quiz</strong> to start reviewing sentence types.</p>
           </section>
         )}
 
-        {/* QUESTION */}
         {hasQuiz && currentQuestion && (
           <section className="panel question-panel">
             <div className="question-top">
@@ -184,23 +144,13 @@ export default function App() {
                   Identify the sentence type.
                 </p>
               </div>
-
-              <span className={`badge badge-${currentQuestion.difficulty}`}>
-                {currentQuestion.difficulty}
-              </span>
             </div>
 
-            <div className="sentence-box">
-              {currentQuestion.sentence}
-            </div>
+            <div className="sentence-box">{currentQuestion.sentence}</div>
 
-            {/* OPTIONS */}
             <div className="options-list">
-              {answerOptions.map(option => (
-                <label
-                  key={option}
-                  className={`option-card ${selectedAnswer === option ? 'selected' : ''}`}
-                >
+              {answerOptions.map((option) => (
+                <label key={option} className={`option-card ${selectedAnswer === option ? 'selected' : ''}`}>
                   <input
                     type="radio"
                     value={option}
@@ -213,7 +163,6 @@ export default function App() {
               ))}
             </div>
 
-            {/* FEEDBACK */}
             {isSubmitted && (
               <div style={{ marginTop: '20px' }}>
                 <FeedbackBox
@@ -223,7 +172,6 @@ export default function App() {
               </div>
             )}
 
-            {/* ACTIONS */}
             <div className="actions">
               {!isSubmitted ? (
                 <button
@@ -249,7 +197,6 @@ export default function App() {
                 </button>
               )}
             </div>
-
           </section>
         )}
       </div>

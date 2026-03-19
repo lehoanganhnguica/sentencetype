@@ -239,4 +239,164 @@ export const questionDatabase = [
       'This is a compound-complex sentence because it has one dependent clause and two independent clauses.',
     difficulty: 'medium',
   },
+    {
+    id: 'stype_031',
+    sentence: 'The singer bowed, and the audience cheered loudly.',
+    correctAnswer: 'compound',
+    explanation:
+      'This is a compound sentence because it contains two independent clauses joined by and.',
+    difficulty: 'easy',
+  },
+  {
+    id: 'stype_032',
+    sentence: 'After the guests arrived, the host welcomed them warmly.',
+    correctAnswer: 'complex',
+    explanation:
+      'This is a complex sentence because it contains one dependent clause introduced by after and one independent clause.',
+    difficulty: 'easy',
+  },
+  {
+    id: 'stype_033',
+    sentence: 'The children played in the garden all afternoon.',
+    correctAnswer: 'simple',
+    explanation:
+      'This is a simple sentence because it has only one independent clause.',
+    difficulty: 'easy',
+  },
+  {
+    id: 'stype_034',
+    sentence: 'The lecture ended, but many students stayed to ask questions.',
+    correctAnswer: 'compound',
+    explanation:
+      'This is a compound sentence because it has two independent clauses joined by but.',
+    difficulty: 'easy',
+  },
+  {
+    id: 'stype_035',
+    sentence: 'Because the road was flooded, the bus arrived late, and several passengers missed their connections.',
+    correctAnswer: 'compound-complex',
+    explanation:
+      'This is a compound-complex sentence because it contains one dependent clause and two independent clauses.',
+    difficulty: 'medium',
+  },
+  {
+    id: 'stype_036',
+    sentence: 'My cousin baked a cake and decorated it with strawberries.',
+    correctAnswer: 'simple',
+    explanation:
+      'This is a simple sentence because it has one subject and one independent clause with a compound verb.',
+    difficulty: 'easy',
+  },
+  {
+    id: 'stype_037',
+    sentence: 'Whenever the phone rings, the dog starts barking.',
+    correctAnswer: 'complex',
+    explanation:
+      'This is a complex sentence because it begins with the dependent clause “Whenever the phone rings.”',
+    difficulty: 'medium',
+  },
+  {
+    id: 'stype_038',
+    sentence: 'The museum was crowded, so we waited outside for a while.',
+    correctAnswer: 'compound',
+    explanation:
+      'This is a compound sentence because it contains two independent clauses joined by so.',
+    difficulty: 'easy',
+  },
+  {
+    id: 'stype_039',
+    sentence: 'The manager who interviewed me seemed very friendly.',
+    correctAnswer: 'complex',
+    explanation:
+      'This is a complex sentence because the relative clause “who interviewed me” is a dependent clause.',
+    difficulty: 'medium',
+  },
+  {
+    id: 'stype_040',
+    sentence: 'The train slowed down before it entered the station.',
+    correctAnswer: 'complex',
+    explanation:
+      'This is a complex sentence because it includes the dependent clause “before it entered the station.”',
+    difficulty: 'medium',
+  },
+  {
+    id: 'stype_041',
+    sentence: 'The wind grew stronger, and the sea became rougher.',
+    correctAnswer: 'compound',
+    explanation:
+      'This is a compound sentence because it has two independent clauses joined by and.',
+    difficulty: 'easy',
+  },
+  {
+    id: 'stype_042',
+    sentence: 'When the concert finished, the crowd moved outside, and the streets became noisy.',
+    correctAnswer: 'compound-complex',
+    explanation:
+      'This is a compound-complex sentence because it contains one dependent clause and two independent clauses.',
+    difficulty: 'medium',
+  },
+  {
+    id: 'stype_043',
+    sentence: 'The flowers in the vase looked fresh and smelled wonderful.',
+    correctAnswer: 'simple',
+    explanation:
+      'This is a simple sentence because it has one independent clause with a compound verb.',
+    difficulty: 'medium',
+  },
+  {
+    id: 'stype_044',
+    sentence: 'Although the instructions were clear, a few students still looked confused.',
+    correctAnswer: 'complex',
+    explanation:
+      'This is a complex sentence because it contains one dependent clause introduced by although and one independent clause.',
+    difficulty: 'easy',
+  },
+  {
+    id: 'stype_045',
+    sentence: 'The lights went out, yet nobody panicked.',
+    correctAnswer: 'compound',
+    explanation:
+      'This is a compound sentence because it contains two independent clauses joined by yet.',
+    difficulty: 'easy',
+  },
+  {
+    id: 'stype_046',
+    sentence: 'Before the guests sat down, the chef checked the table, and the servers poured water.',
+    correctAnswer: 'compound-complex',
+    explanation:
+      'This is a compound-complex sentence because it has one dependent clause and two independent clauses.',
+    difficulty: 'difficult',
+  },
+  {
+    id: 'stype_047',
+    sentence: 'Her father reads the newspaper every morning and drinks black coffee.',
+    correctAnswer: 'simple',
+    explanation:
+      'This is a simple sentence because it has one independent clause with a compound verb.',
+    difficulty: 'medium',
+  },
+  {
+    id: 'stype_048',
+    sentence: 'If you need more time, I can help you, and we can finish the project tomorrow.',
+    correctAnswer: 'compound-complex',
+    explanation:
+      'This is a compound-complex sentence because it contains one dependent clause and two independent clauses.',
+    difficulty: 'medium',
+  },
+  {
+    id: 'stype_049',
+    sentence: 'The athlete trained hard because she wanted to win.',
+    correctAnswer: 'complex',
+    explanation:
+      'This is a complex sentence because it contains one independent clause and one dependent clause introduced by because.',
+    difficulty: 'easy',
+  },
+  {
+    id: 'stype_050',
+    sentence: 'The neighbours waved, and we smiled back.',
+    correctAnswer: 'compound',
+    explanation:
+      'This is a compound sentence because it contains two independent clauses joined by and.',
+    difficulty: 'easy',
+  },
 ]

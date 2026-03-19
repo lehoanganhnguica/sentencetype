@@ -2,6 +2,21 @@ import { useMemo, useState } from 'react'
 import { questionDatabase } from './data/questions'
 
 const QUIZ_SIZE = 8
+
+const errorTypes = [
+  'Comma splice',
+  'Fragment',
+  'Connector punctuation',
+  'Sentence type challenge',
+  'Missing comma',
+  'Connector misuse',
+  'Run-on sentence',
+  'Double connector',
+  'Extra conjunction',
+  'Weak sentence connection',
+  'Incorrect structure',
+]
+
 const sentenceTypes = ['simple', 'compound', 'complex', 'compound-complex']
 
 function shuffleArray(arr) {
@@ -27,40 +42,34 @@ function StatCard({ label, value }) {
   )
 }
 
-function FeedbackBox({ question, selectedCorrection, selectedType }) {
-  const correctionCorrect = selectedCorrection === question.corrected
-  const typeCorrect = selectedType === question.targetType
-  const allCorrect = correctionCorrect && typeCorrect
+function FeedbackBox({ question, selectedAnswer, mode }) {
+  const correctAnswer = mode === 'error' ? question.issue : question.targetType
+  const isCorrect = selectedAnswer === correctAnswer
 
   return (
-    <div className={`feedback-box ${allCorrect ? 'correct' : 'wrong'}`}>
-      <div className="feedback-title">{allCorrect ? 'Correct' : 'Not quite'}</div>
+    <div className={`feedback-box ${isCorrect ? 'correct' : 'wrong'}`}>
+      <div className="feedback-title">{isCorrect ? 'Correct' : 'Not quite'}</div>
+
       <div className="feedback-text">
-        <strong>Corrected sentence:</strong> {question.corrected}
+        <strong>Correct answer:</strong> {correctAnswer}
       </div>
-      <div className="feedback-text">
-        <strong>Sentence type:</strong> {question.targetType}
-      </div>
+
+      {mode === 'sentence' && (
+        <div className="feedback-text">
+          <strong>Corrected sentence:</strong> {question.corrected}
+        </div>
+      )}
+
       <div className="feedback-text">{question.explanation}</div>
-      {!correctionCorrect && (
-        <div className="feedback-text">
-          Your repair choice was not the best fix for this sentence.
-        </div>
-      )}
-      {!typeCorrect && (
-        <div className="feedback-text">
-          Review the corrected sentence carefully before choosing the sentence type.
-        </div>
-      )}
     </div>
   )
 }
 
 export default function App() {
+  const [mode, setMode] = useState('error')
   const [quiz, setQuiz] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [selectedCorrection, setSelectedCorrection] = useState('')
-  const [selectedType, setSelectedType] = useState('')
+  const [selectedAnswer, setSelectedAnswer] = useState('')
   const [submittedMap, setSubmittedMap] = useState({})
   const [answerMap, setAnswerMap] = useState({})
 
@@ -77,12 +86,10 @@ export default function App() {
       const answer = answerMap[question.id]
       if (!answer) return total
 
-      const correctionCorrect = answer.selectedCorrection === question.corrected
-      const typeCorrect = answer.selectedType === question.targetType
-
-      return correctionCorrect && typeCorrect ? total + 1 : total
+      const correctAnswer = mode === 'error' ? question.issue : question.targetType
+      return answer === correctAnswer ? total + 1 : total
     }, 0)
-  }, [quiz, answerMap])
+  }, [quiz, answerMap, mode])
 
   const progress = hasQuiz ? Math.round((completedCount / quiz.length) * 100) : 0
 
@@ -90,21 +97,17 @@ export default function App() {
     const newQuiz = generateQuizData()
     setQuiz(newQuiz)
     setCurrentIndex(0)
-    setSelectedCorrection('')
-    setSelectedType('')
+    setSelectedAnswer('')
     setSubmittedMap({})
     setAnswerMap({})
   }
 
   function handleCheckAnswer() {
-    if (!currentQuestion || !selectedCorrection || !selectedType) return
+    if (!currentQuestion || !selectedAnswer) return
 
     setAnswerMap((prev) => ({
       ...prev,
-      [currentQuestion.id]: {
-        selectedCorrection,
-        selectedType,
-      },
+      [currentQuestion.id]: selectedAnswer,
     }))
 
     setSubmittedMap((prev) => ({
@@ -115,9 +118,15 @@ export default function App() {
 
   function handleNextQuestion() {
     setCurrentIndex((prev) => prev + 1)
-    setSelectedCorrection('')
-    setSelectedType('')
+    setSelectedAnswer('')
   }
+
+  const currentOptions = mode === 'error' ? errorTypes : sentenceTypes
+  const displaySentence = mode === 'error' ? currentQuestion?.faulty : currentQuestion?.corrected
+  const instruction =
+    mode === 'error'
+      ? 'Read the faulty sentence and choose the type of error.'
+      : 'Read the corrected sentence and choose the sentence type.'
 
   return (
     <div className="page">
@@ -125,7 +134,7 @@ export default function App() {
         <section className="panel">
           <h1 className="title">Sentence Repair Trainer</h1>
           <p className="subtitle">
-            Fix the sentence, then choose the sentence type after correction.
+            Review sentence errors or sentence types in quiz mode.
           </p>
 
           <div className="stats-grid">
@@ -136,11 +145,20 @@ export default function App() {
 
           <div className="controls">
             <div className="control-group">
-              <div className="control-label">Quiz format</div>
-              <div className="subtitle">
-                Step 1: choose the best repair. Step 2: choose the sentence type.
-              </div>
+              <label htmlFor="mode" className="control-label">
+                Mode
+              </label>
+              <select
+                id="mode"
+                className="select"
+                value={mode}
+                onChange={(e) => setMode(e.target.value)}
+              >
+                <option value="error">Error type</option>
+                <option value="sentence">Sentence type</option>
+              </select>
             </div>
+
             <button className="button button-primary" onClick={generateNewQuiz}>
               Generate new quiz
             </button>
@@ -161,7 +179,7 @@ export default function App() {
           <section className="panel empty-state">
             <h2>No quiz yet</h2>
             <p>
-              Click <strong>Generate new quiz</strong> to begin.
+              Choose a mode, then click <strong>Generate new quiz</strong> to begin.
             </p>
           </section>
         )}
@@ -171,68 +189,52 @@ export default function App() {
             <div className="question-top">
               <div>
                 <h2 className="question-title">Question {currentIndex + 1}</h2>
-                <p className="question-subtitle">Repair the sentence, then identify the sentence type.</p>
+                <p className="question-subtitle">{instruction}</p>
               </div>
-              <span className="badge">{currentQuestion.issue}</span>
+              <span className="badge">{mode === 'error' ? 'Error type mode' : 'Sentence type mode'}</span>
             </div>
 
-            <div className="sentence-box">{currentQuestion.faulty}</div>
+            <div className="sentence-box">{displaySentence}</div>
 
-            <div className="feedback-box" style={{ background: '#f8fafc', borderColor: '#d1d5db', marginTop: '20px' }}>
-              <div className="feedback-title">Hint</div>
-              <div className="feedback-text">{currentQuestion.hint}</div>
-            </div>
+            {mode === 'sentence' && (
+              <div
+                className="feedback-box"
+                style={{ background: '#f8fafc', borderColor: '#d1d5db', marginTop: '20px' }}
+              >
+                <div className="feedback-title">Original faulty sentence</div>
+                <div className="feedback-text">{currentQuestion.faulty}</div>
+              </div>
+            )}
+
+            {mode === 'error' && (
+              <div
+                className="feedback-box"
+                style={{ background: '#f8fafc', borderColor: '#d1d5db', marginTop: '20px' }}
+              >
+                <div className="feedback-title">Hint</div>
+                <div className="feedback-text">{currentQuestion.hint}</div>
+              </div>
+            )}
 
             <div style={{ marginTop: '20px' }}>
-              <h3
-                className="question-subtitle"
-                style={{ color: '#111827', fontWeight: 700, marginBottom: '12px' }}
-              >
-                Step 1: Choose the best repair
-              </h3>
               <div className="options-list">
-                {currentQuestion.choices.map((choice) => (
-                  <label key={choice} className="option-card" style={{ alignItems: 'flex-start' }}>
+                {currentOptions.map((option) => (
+                  <label key={option} className="option-card" style={{ alignItems: 'flex-start' }}>
                     <input
                       type="radio"
-                      name={`repair-${currentQuestion.id}`}
-                      value={choice}
-                      checked={selectedCorrection === choice}
-                      onChange={() => setSelectedCorrection(choice)}
+                      name={`question-${currentQuestion.id}`}
+                      value={option}
+                      checked={selectedAnswer === option}
+                      onChange={() => setSelectedAnswer(option)}
                       disabled={isSubmitted}
                     />
-                    <span className="option-text" style={{ textTransform: 'none', fontSize: '16px' }}>
-                      {choice}
+                    <span
+                      className="option-text"
+                      style={{ textTransform: 'none', fontSize: '16px' }}
+                    >
+                      {option}
                     </span>
                   </label>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ marginTop: '20px' }}>
-              <h3
-                className="question-subtitle"
-                style={{ color: '#111827', fontWeight: 700, marginBottom: '12px' }}
-              >
-                Step 2: Choose the sentence type after correction
-              </h3>
-              <div className="stats-grid" style={{ marginTop: 0 }}>
-                {sentenceTypes.map((type) => (
-                  <button
-                    key={type}
-                    type="button"
-                    className="button"
-                    onClick={() => setSelectedType(type)}
-                    disabled={isSubmitted}
-                    style={{
-                      background: selectedType === type ? '#111827' : '#ffffff',
-                      color: selectedType === type ? '#ffffff' : '#111827',
-                      border: '1px solid #d1d5db',
-                      textTransform: 'capitalize',
-                    }}
-                  >
-                    {type}
-                  </button>
                 ))}
               </div>
             </div>
@@ -241,8 +243,8 @@ export default function App() {
               <div style={{ marginTop: '20px' }}>
                 <FeedbackBox
                   question={currentQuestion}
-                  selectedCorrection={answerMap[currentQuestion.id].selectedCorrection}
-                  selectedType={answerMap[currentQuestion.id].selectedType}
+                  selectedAnswer={answerMap[currentQuestion.id]}
+                  mode={mode}
                 />
               </div>
             )}
@@ -252,7 +254,7 @@ export default function App() {
                 <button
                   className="button button-primary"
                   onClick={handleCheckAnswer}
-                  disabled={!selectedCorrection || !selectedType}
+                  disabled={!selectedAnswer}
                 >
                   Check answer
                 </button>
